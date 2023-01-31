@@ -84,12 +84,12 @@ def WORKERS(fileLines):
 				workers_bigram_dict[bigram_key] = coming_bigram_dict[bigram_key]
 
 	# SENDING DATA TO NEXT NODE
-	if rank != world_size-1:							# if not the last worker -> send the calculated data to the next worker
+	if rank != world_size-1:							# If not the last worker -> send the calculated data to the next worker
 		comm.send(workers_unigram_dict,dest = rank+1,tag = rank )                                           
 		comm.send(workers_bigram_dict, dest = rank+1,tag = rank + world_size)
 
-	else:													# if the last worker do not send the data to the master
-		comm.send(workers_unigram_dict,dest = 0,tag = rank )                                           
+	else:										# If the last worker send the data to the master
+		comm.send(workers_unigram_dict,dest = 0,tag = rank )                    # instead of the next worker
 		comm.send(workers_bigram_dict, dest = 0,tag = rank + world_size)
 
 ####################### 
@@ -103,7 +103,7 @@ if rank == 0:	# if node is the master
 	lineCounter = 0
 	quotient = lineCount // (world_size - 1)   # We are trying to fairly distribute the lines.
 	remainder = lineCount % (world_size - 1)   # While we have a remainder, a process will be assigned quotient + 1 lines and the remainder would be decremented to 0. After that, we will assign the remaining processes quotient-number of lines.
-	for worker in range (1,world_size):        # This allocation algorithm is written to satisfy the FIRST REQUIREMENTS
+	for worker in range (1,world_size):        # This allocation algorithm is written to satisfy the FIRST REQUIREMENT
 		if remainder > 0:
 			comm.send(fileLines[int(lineCounter) : int(lineCounter + quotient + 1)],dest = int(worker))
 			remainder = remainder - 1 

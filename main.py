@@ -13,9 +13,7 @@ unigram_dict = {}              # Dictionary to store the unigrams of each parall
 comm = MPI.COMM_WORLD          # Initializing an instance of the default communicator.
 world_size = comm.Get_size()   # The number of parallel process including the master.
 rank = comm.Get_rank()         # The special ID for each parallel process.
-#######################################
 
-####################### A function to statisfy the second requirement
 def MASTER(fileLines):  
 	for line in fileLines:                         # Loop over each line in the list sent by the master.
 		tokenList = line.split()                   # Tokenize the line using split.
@@ -37,10 +35,9 @@ def MASTER(fileLines):
 		else:
 			unigram_dict[tokenList[tokensize - 1]] = 1		
 	comm.send(unigram_dict,dest = 0,tag = rank )                                           # Send the unigram dictionary back to the master. The rank is assigned as a tag to the message.
-	comm.send(bigram_dict, dest = 0,tag = rank + world_size)							   # Send the bigram dictionary back to the master. A different tag is assigned to distinguish the second message from the first one.
-####################### 
+	comm.send(bigram_dict, dest = 0,tag = rank + world_size)		               # Send the bigram dictionary back to the master. A different tag is assigned to distinguish the second message from the first one.
 
-####################### A function to statisfy the THIRD requirement
+
 def WORKERS(fileLines):
 	# dicts calculated by workers itself only --> will be merged with the coming dicts later
 	workers_unigram_dict = {}
@@ -91,8 +88,6 @@ def WORKERS(fileLines):
 	else:										# If the last worker send the data to the master
 		comm.send(workers_unigram_dict,dest = 0,tag = rank )                    # instead of the next worker
 		comm.send(workers_bigram_dict, dest = 0,tag = rank + world_size)
-
-####################### 
 
 ####################### The program's main driver part
 
@@ -164,6 +159,4 @@ if rank == 0:
 	testFile.close()   ###Files are closed at the end
 	inputfile.close()  ###Requirement 4 is satisfied	
 
-#######################
 exit()
-

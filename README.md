@@ -1,4 +1,4 @@
-# MPI Programming Project (CmpE 300 Analysis Of Algorithms)
+# MPI Programming Project (CmpE 300 - Analysis Of Algorithms)
 
 You can execute the code via following command:
 ### `mpiexec -n 5 python main.py --input_file data/sample_text.txt --merge_method MASTER --test_file data/test.txt`
